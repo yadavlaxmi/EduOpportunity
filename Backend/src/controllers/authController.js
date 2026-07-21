@@ -1,11 +1,27 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { OAuth2Client } = require("google-auth-library");
+
+// Google OAuth Client
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+/* ===========================
+   SIGNUP
+=========================== */
 const signup = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
 
-    // Check if user already exists
+    // Validation
+    if (!fullName || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    // Check existing user
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -15,16 +31,17 @@ const signup = async (req, res) => {
       });
     }
 
-    // Create new user (password hashing later)
+    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const newUser = new User({
+
+    // Create user
+    const newUser = await User.create({
       fullName,
       email,
       password: hashedPassword,
+      provider: "local",
     });
-
-    await newUser.save();
 
     res.status(201).json({
       success: true,
@@ -33,11 +50,11 @@ const signup = async (req, res) => {
         id: newUser._id,
         fullName: newUser.fullName,
         email: newUser.email,
+        role: newUser.role,
       },
     });
-
   } catch (error) {
-    console.error(error);
+    console.error("Signup Error:", error);
 
     res.status(500).json({
       success: false,
@@ -45,11 +62,15 @@ const signup = async (req, res) => {
     });
   }
 };
+
+/* ===========================
+   LOGIN
+=========================== */
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // 1. Check if user exists
+    // Check user
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -59,7 +80,15 @@ const login = async (req, res) => {
       });
     }
 
-    // 2. Compare password
+    // Google account check
+    if (user.provider === "google") {
+      return res.status(400).json({
+        success: false,
+        message: "This account uses Google Sign-In. Please login with Google.",
+      });
+    }
+
+    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
@@ -69,7 +98,7 @@ const login = async (req, res) => {
       });
     }
 
-    // 3. Generate JWT Token
+    // Generate JWT
     const token = jwt.sign(
       {
         userId: user._id,
@@ -81,21 +110,21 @@ const login = async (req, res) => {
       }
     );
 
-    // 4. Send Response
     res.status(200).json({
       success: true,
-      message: "Login successful",
+      message: "Login Successful",
       token,
       user: {
         id: user._id,
         fullName: user.fullName,
         email: user.email,
+        profilePicture: user.profilePicture,
         role: user.role,
+        provider: user.provider,
       },
     });
-
   } catch (error) {
-    console.error(error);
+    console.error("Login Error:", error);
 
     res.status(500).json({
       success: false,
@@ -104,7 +133,81 @@ const login = async (req, res) => {
   }
 };
 
+/* ===========================
+   GOOGLE LOGIN
+=========================== */
+const googleLogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    // Verify Google Token
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+
+    const {
+      email,
+      name: fullName,
+      picture,
+    } = payload;
+
+    // Find existing user
+    let user = await User.findOne({ email });
+
+    // Create new Google user if not found
+    if (!user) {
+      user = await User.create({
+        fullName,
+        email,
+        password: "",
+        profilePicture: picture,
+        provider: "google",
+      });
+    }
+
+    // Generate JWT
+    const jwtToken = jwt.sign(
+      {
+        userId: user._id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Google Login Successful",
+      token: jwtToken,
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        profilePicture: user.profilePicture,
+        role: user.role,
+        provider: user.provider,
+      },
+    });
+  } catch (error) {
+    console.error("Google Login Error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Google Login Failed",
+    });
+  }
+};
+
+/* ===========================
+   EXPORTS
+=========================== */
 module.exports = {
   signup,
   login,
+  googleLogin,
 };
