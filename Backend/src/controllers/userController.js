@@ -1,25 +1,45 @@
-const User = require("../models/User");
+// const User = require("../models/User");
 
-const getProfile = async (req, res) => {
-  try {
+// const getProfile = async (req, res) => {
+//   try {
 
-    const user = await User.findById(req.user.userId).select("-password");
+//     const user = await User.findById(req.user.userId).select("-password");
 
-    res.status(200).json({
-      success: true,
-      user,
+//     res.status(200).json({
+//       success: true,
+//       user,
+//     });
+
+//   } catch (error) {
+
+//     res.status(500).json({
+//       success: false,
+//       message: "Server Error",
+//     });
+
+//   }
+// };
+
+// module.exports = {
+//   getProfile,
+// };
+
+exports.getProfile = async (req,res)=>{
+
+  try{
+
+    res.json({
+      message:"Profile fetched successfully",
+      user:req.user
     });
 
-  } catch (error) {
+
+  }catch(error){
 
     res.status(500).json({
-      success: false,
-      message: "Server Error",
+      message:error.message
     });
 
   }
-};
 
-module.exports = {
-  getProfile,
 };

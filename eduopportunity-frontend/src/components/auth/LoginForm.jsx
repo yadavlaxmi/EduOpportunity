@@ -23,9 +23,26 @@ function LoginForm() {
 
       console.log(res.data);
 
-      localStorage.setItem("token", res.data.token);
+    localStorage.setItem(
+ "token",
+ res.data.token
+);
 
-      alert("Login Successful");
+localStorage.setItem(
+ "user",
+ JSON.stringify(res.data.user)
+);
+
+
+if(res.data.user.role==="admin"){
+   navigate("/admin");
+}
+else if(res.data.user.role==="organization"){
+   navigate("/organization");
+}
+else{
+   navigate("/student");
+}
 
     } catch (err) {
       alert(err.response?.data?.message || "Login Failed");

@@ -11,7 +11,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 =========================== */
 const signup = async (req, res) => {
   try {
-    const { fullName, email, password } = req.body;
+    const { fullName, email, password, role } = req.body;
 
     // Validation
     if (!fullName || !email || !password) {
@@ -41,6 +41,7 @@ const signup = async (req, res) => {
       email,
       password: hashedPassword,
       provider: "local",
+      role:role || "student" // Default to "student" if not provided
     });
 
     res.status(201).json({

@@ -11,6 +11,7 @@ function Signup() {
     email: "",
     password: "",
     confirmPassword: "",
+    role:"student",
   });
 
   const handleChange = (e) => {
@@ -32,6 +33,7 @@ function Signup() {
         fullName: formData.fullName,
         email: formData.email,
         password: formData.password,
+        role: formData.role,
       });
 
       alert(res.data.message);
@@ -87,7 +89,21 @@ function Signup() {
             name="confirmPassword"
             onChange={handleChange}
           />
+            <select
+ className="border p-3 rounded w-full mb-4"
+ name="role"
+ onChange={handleChange}
+>
 
+<option value="student">
+Student
+</option>
+
+<option value="organization">
+Organization
+</option>
+
+</select>
           <button
             className="bg-blue-600 text-white w-full p-3 rounded hover:bg-blue-700"
           >
