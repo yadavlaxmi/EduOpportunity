@@ -16,7 +16,6 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
-    // Empty for Google users
     password: {
       type: String,
       default: "",
@@ -27,7 +26,6 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
 
-    // How the user registered
     provider: {
       type: String,
       enum: ["local", "google"],
@@ -38,6 +36,16 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["student", "admin", "organization"],
       default: "student",
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+
+
+    profileCompleted: {
+      type: Boolean,
+      default: false,
     },
   },
   {

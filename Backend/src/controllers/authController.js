@@ -81,6 +81,12 @@ const login = async (req, res) => {
       });
     }
 
+    if (!user.isActive) {
+  return res.status(403).json({
+    success: false,
+    message: "Your account has been deactivated. Please contact support."
+  });
+}
     // Google account check
     if (user.provider === "google") {
       return res.status(400).json({
@@ -168,6 +174,12 @@ const googleLogin = async (req, res) => {
         provider: "google",
       });
     }
+    if (!user.isActive) {
+  return res.status(403).json({
+    success: false,
+    message: "Your account has been deactivated. Please contact support."
+  });
+}
 
     // Generate JWT
     const jwtToken = jwt.sign(
