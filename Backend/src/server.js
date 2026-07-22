@@ -10,6 +10,8 @@ const adminRoutes = require("./routes/adminRoutes");
 const studentRoutes = require("./routes/studentRoutes");
 const User = require("./models/User");
 const organizationRoutes = require("./routes/organizationRoutes");
+const scholarshipRoutes = require("./routes/scholarshipRoutes");
+const olympiadRoutes = require("./routes/olympiadRoutes");
 const app = express();
 
 connectDB();
@@ -30,6 +32,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/organization", organizationRoutes);
+app.use("/api/scholarships", scholarshipRoutes);
+app.use("/api/olympiads", olympiadRoutes);
 
 
 app.get("/", async (req, res) => {

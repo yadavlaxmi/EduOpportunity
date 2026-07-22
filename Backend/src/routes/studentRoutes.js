@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 const protect = require("../middleware/authMiddleware");
+const authorize = require("../middleware/roleMiddleware");
 
 const {
   createStudentProfile,
@@ -10,13 +11,28 @@ const {
   updateStudentProfile,
 } = require("../controllers/studentController");
 
-// Create Profile
-router.post("/profile", protect, createStudentProfile);
+// Create Student Profile
+router.post(
+  "/profile",
+  protect,
+  authorize("student"),
+  createStudentProfile
+);
 
-// Get Profile
-router.get("/profile", protect, getStudentProfile);
+// Get Student Profile
+router.get(
+  "/profile",
+  protect,
+  authorize("student"),
+  getStudentProfile
+);
 
-// Update Profile
-router.put("/profile", protect, updateStudentProfile);
+// Update Student Profile
+router.put(
+  "/profile",
+  protect,
+  authorize("student"),
+  updateStudentProfile
+);
 
 module.exports = router;
