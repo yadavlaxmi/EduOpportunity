@@ -1,5 +1,5 @@
 const Olympiad = require("../models/Olympiad");
-
+const OlympiadApiFeatures = require("../utils/olympiadApiFeatures");
 // ====================================
 // Create Olympiad
 // ====================================
@@ -30,23 +30,45 @@ const createOlympiad = async (req, res) => {
 // ====================================
 const getAllOlympiads = async (req, res) => {
   try {
-    const olympiads = await Olympiad.find({
+
+    const resultPerPage = Number(req.query.limit) || 10;
+
+    const apiFeatures = new OlympiadApiFeatures(
+      Olympiad.find({
+        isActive: true,
+        status: "Published",
+      }).populate("organization", "fullName email"),
+      req.query
+    )
+      .search()
+      .filter()
+      .sort()
+      .pagination(resultPerPage);
+
+    const olympiads = await apiFeatures.query;
+
+    const total = await Olympiad.countDocuments({
       isActive: true,
       status: "Published",
-    })
-      .populate("organization", "fullName email")
-      .sort({ createdAt: -1 });
+    });
 
     res.status(200).json({
       success: true,
-      count: olympiads.length,
+      total,
+      currentPage: Number(req.query.page) || 1,
+      resultPerPage,
       olympiads,
     });
+
   } catch (error) {
+
+    console.log(error);
+
     res.status(500).json({
       success: false,
       message: "Server Error",
     });
+
   }
 };
 

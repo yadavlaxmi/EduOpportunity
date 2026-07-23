@@ -128,6 +128,7 @@ const login = async (req, res) => {
         profilePicture: user.profilePicture,
         role: user.role,
         provider: user.provider,
+        profileCompleted: user.profileCompleted,
       },
     });
   } catch (error) {
@@ -204,6 +205,7 @@ const googleLogin = async (req, res) => {
         profilePicture: user.profilePicture,
         role: user.role,
         provider: user.provider,
+        profileCompleted: user.profileCompleted,
       },
     });
   } catch (error) {
