@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Grid, Card, CardContent, Chip, Button, IconButton } from '@mui/material';
+import { Box, Typography, Grid, Card, CardContent, Chip, Button, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Divider } from '@mui/material';
 import { motion } from 'framer-motion';
-import { MdBookmarkBorder, MdBookmark } from 'react-icons/md';
+import { MdBookmarkBorder } from 'react-icons/md';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
 const Olympiads = () => {
   const [olympiads, setOlympiads] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedOlym, setSelectedOlym] = useState(null);
+  const [openDetails, setOpenDetails] = useState(false);
   const token = localStorage.getItem('token');
 
   useEffect(() => {
@@ -55,6 +57,11 @@ const Olympiads = () => {
     }
   };
 
+  const handleOpenDetails = (olym) => {
+    setSelectedOlym(olym);
+    setOpenDetails(true);
+  };
+
   if (loading) return <Typography p={4}>Loading olympiads...</Typography>;
 
   return (
@@ -90,9 +97,14 @@ const Olympiads = () => {
                   <Typography variant="body2" color="text.secondary" mb={3} sx={{ flexGrow: 1 }}>
                     {olym.description ? olym.description.substring(0, 100) + '...' : 'No description provided.'}
                   </Typography>
-                  <Button variant="contained" fullWidth onClick={() => handleApply(olym._id)}>
-                    Apply Now
-                  </Button>
+                  <Box display="flex" flexDirection="column" gap={1} mt={2}>
+                    <Button variant="contained" fullWidth onClick={() => handleApply(olym._id)} sx={{ textTransform: 'none', fontWeight: 'bold' }}>
+                      Apply Now
+                    </Button>
+                    <Button variant="outlined" fullWidth onClick={() => handleOpenDetails(olym)} sx={{ textTransform: 'none' }}>
+                      View Details
+                    </Button>
+                  </Box>
                 </CardContent>
               </Card>
             </motion.div>
@@ -101,6 +113,52 @@ const Olympiads = () => {
           <Typography pl={3}>No olympiads available at the moment.</Typography>
         )}
       </Grid>
+
+      {/* Details Dialog */}
+      <Dialog open={openDetails} onClose={() => setOpenDetails(false)} maxWidth="sm" fullWidth>
+        <DialogTitle fontWeight="bold">{selectedOlym?.title}</DialogTitle>
+        <DialogContent>
+          <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
+            <Chip label={`Subject: ${selectedOlym?.olympiadType}`} color="warning" variant="outlined" />
+            <Chip label={`Level: ${selectedOlym?.educationLevel}`} color="secondary" variant="outlined" />
+            <Chip label={`Fee: ₹${selectedOlym?.registrationFee || 0}`} color="success" />
+          </Box>
+          <Divider sx={{ my: 2 }} />
+          <Typography variant="subtitle1" fontWeight="bold">Description</Typography>
+          <Typography variant="body2" color="text.secondary" paragraph>
+            {selectedOlym?.description}
+          </Typography>
+          
+          <Typography variant="subtitle1" fontWeight="bold" mt={2}>Important Dates</Typography>
+          <Typography variant="body2" color="text.secondary">
+            Registration Starts: {selectedOlym?.registrationStartDate ? new Date(selectedOlym.registrationStartDate).toLocaleDateString() : 'N/A'}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Registration Ends: {selectedOlym?.registrationEndDate ? new Date(selectedOlym.registrationEndDate).toLocaleDateString() : 'N/A'}
+          </Typography>
+          {selectedOlym?.examDate && (
+            <Typography variant="body2" color="text.secondary">
+              Exam Date: {new Date(selectedOlym.examDate).toLocaleDateString()}
+            </Typography>
+          )}
+
+          {selectedOlym?.organization && (
+            <>
+              <Typography variant="subtitle1" fontWeight="bold" mt={2}>Hosted By</Typography>
+              <Typography variant="body2" color="text.secondary">
+                {selectedOlym.organization.fullName || 'N/A'} ({selectedOlym.organization.email || 'N/A'})
+              </Typography>
+            </>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button onClick={() => setOpenDetails(false)}>Close</Button>
+          <Button variant="contained" color="warning" onClick={() => {
+            handleApply(selectedOlym?._id);
+            setOpenDetails(false);
+          }}>Apply Now</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

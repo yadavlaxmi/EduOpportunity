@@ -26,7 +26,17 @@ const {
 
 router.get("/", getAllScholarships);
 
+router.get(
+  "/my",
+  protect,
+  authorize("organization"),
+  getMyScholarships
+);
+
+
+
 router.get("/:id", getScholarshipById);
+
 
 // ====================
 // Organization APIs
@@ -41,12 +51,6 @@ router.post(
   createScholarship
 );
 
-router.get(
-  "/my",
-  protect,
-  authorize("organization"),
-  getMyScholarships
-);
 
 router.put(
   "/:id",

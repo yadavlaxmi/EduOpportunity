@@ -13,6 +13,12 @@ import Olympiads from "./pages/student/Olympiads";
 import Saved from "./pages/student/Saved";
 import Applied from "./pages/student/Applied";
 
+import OrgProfileSetup from "./pages/organization/ProfileSetup";
+import OrgDashboard from "./pages/organization/Dashboard";
+import OrgScholarships from "./pages/organization/Scholarships";
+import OrgOlympiads from "./pages/organization/Olympiads";
+import OrgProfile from "./pages/organization/Profile";
+
 function App() {
   return (
     <BrowserRouter>
@@ -26,6 +32,7 @@ function App() {
           
           {/* Profile Setup Page (Navbar/Footer but no Sidebar) */}
           <Route path="/student/profile-setup" element={<ProfileSetup />} />
+          <Route path="/organization/profile-setup" element={<OrgProfileSetup />} />
         </Route>
         
         {/* Auth routes without Navbar/Footer */}
@@ -43,10 +50,10 @@ function App() {
         </Route>
 
         <Route path="/organization" element={<DashboardLayout role="organization" />}>
-          <Route path="dashboard" element={<div>Org Dashboard (Coming Soon)</div>} />
-          <Route path="scholarships" element={<div>Org Scholarships (Coming Soon)</div>} />
-          <Route path="olympiads" element={<div>Org Olympiads (Coming Soon)</div>} />
-          <Route path="profile" element={<div>Profile (Coming Soon)</div>} />
+          <Route path="dashboard" element={<OrgDashboard />} />
+          <Route path="scholarships" element={<OrgScholarships />} />
+          <Route path="olympiads" element={<OrgOlympiads />} />
+          <Route path="profile" element={<OrgProfile />} />
         </Route>
       </Routes>
     </BrowserRouter>

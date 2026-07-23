@@ -16,6 +16,13 @@ const {
 
 // Public APIs
 router.get("/", getAllOlympiads);
+router.get(
+  "/my",
+  protect,
+  authorize("organization"),
+  getMyOlympiads
+);
+
 router.get("/:id", getOlympiadById);
 
 // Organization APIs
@@ -26,12 +33,6 @@ router.post(
   createOlympiad
 );
 
-router.get(
-  "/my",
-  protect,
-  authorize("organization"),
-  getMyOlympiads
-);
 
 router.put(
   "/:id",

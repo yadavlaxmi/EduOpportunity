@@ -111,6 +111,8 @@ const getScholarshipById = async (req, res) => {
 // ====================================
 const getMyScholarships = async (req, res) => {
   try {
+    console.log("Logged in user:", req.user);
+
     const scholarships = await Scholarship.find({
       organization: req.user._id,
     }).sort({ createdAt: -1 });
@@ -120,10 +122,14 @@ const getMyScholarships = async (req, res) => {
       count: scholarships.length,
       scholarships,
     });
+
   } catch (error) {
+    console.error(error);   // <-- add this
+
     res.status(500).json({
       success: false,
       message: "Server Error",
+      error: error.message, // temporary for debugging
     });
   }
 };

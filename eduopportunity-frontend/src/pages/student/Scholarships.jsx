@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Grid, Card, CardContent, Chip, Button, IconButton } from '@mui/material';
+import { Box, Typography, Grid, Card, CardContent, Chip, Button, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Divider } from '@mui/material';
 import { motion } from 'framer-motion';
-import { MdBookmarkBorder, MdBookmark } from 'react-icons/md';
+import { MdBookmarkBorder } from 'react-icons/md';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
 const Scholarships = () => {
   const [scholarships, setScholarships] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedSchol, setSelectedSchol] = useState(null);
+  const [openDetails, setOpenDetails] = useState(false);
   const token = localStorage.getItem('token');
 
   useEffect(() => {
@@ -16,7 +18,6 @@ const Scholarships = () => {
 
   const fetchScholarships = async () => {
     try {
-      // Assuming GET /api/scholarships is a public or protected route returning list
       const response = await axios.get('http://localhost:5005/api/scholarships', {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -54,6 +55,11 @@ const Scholarships = () => {
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to apply');
     }
+  };
+
+  const handleOpenDetails = (schol) => {
+    setSelectedSchol(schol);
+    setOpenDetails(true);
   };
 
   if (loading) return <Typography p={4}>Loading scholarships...</Typography>;
@@ -94,9 +100,14 @@ const Scholarships = () => {
                   <Typography variant="body2" color="text.secondary" mb={3} sx={{ flexGrow: 1 }}>
                     {schol.description ? schol.description.substring(0, 100) + '...' : 'No description provided.'}
                   </Typography>
-                  <Button variant="contained" fullWidth onClick={() => handleApply(schol._id)}>
-                    Apply Now
-                  </Button>
+                  <Box display="flex" flexDirection="column" gap={1} mt={2}>
+                    <Button variant="contained" fullWidth onClick={() => handleApply(schol._id)} sx={{ textTransform: 'none', fontWeight: 'bold' }}>
+                      Apply Now
+                    </Button>
+                    <Button variant="outlined" fullWidth onClick={() => handleOpenDetails(schol)} sx={{ textTransform: 'none' }}>
+                      View Details
+                    </Button>
+                  </Box>
                 </CardContent>
               </Card>
             </motion.div>
@@ -105,6 +116,47 @@ const Scholarships = () => {
           <Typography pl={3}>No scholarships available at the moment.</Typography>
         )}
       </Grid>
+
+      {/* Details Dialog */}
+      <Dialog open={openDetails} onClose={() => setOpenDetails(false)} maxWidth="sm" fullWidth>
+        <DialogTitle fontWeight="bold">{selectedSchol?.title}</DialogTitle>
+        <DialogContent>
+          <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
+            <Chip label={`Type: ${selectedSchol?.scholarshipType}`} color="primary" variant="outlined" />
+            <Chip label={`Level: ${selectedSchol?.educationLevel}`} color="secondary" variant="outlined" />
+            <Chip label={`Amount: ₹${selectedSchol?.amount}`} color="success" />
+          </Box>
+          <Divider sx={{ my: 2 }} />
+          <Typography variant="subtitle1" fontWeight="bold">Description</Typography>
+          <Typography variant="body2" color="text.secondary" paragraph>
+            {selectedSchol?.description}
+          </Typography>
+          
+          <Typography variant="subtitle1" fontWeight="bold" mt={2}>Important Dates</Typography>
+          <Typography variant="body2" color="text.secondary">
+            Start Date: {selectedSchol?.startDate ? new Date(selectedSchol.startDate).toLocaleDateString() : 'N/A'}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Last Date to Apply: {selectedSchol?.lastDate ? new Date(selectedSchol.lastDate).toLocaleDateString() : 'N/A'}
+          </Typography>
+
+          {selectedSchol?.organization && (
+            <>
+              <Typography variant="subtitle1" fontWeight="bold" mt={2}>Offered By</Typography>
+              <Typography variant="body2" color="text.secondary">
+                {selectedSchol.organization.fullName || 'N/A'} ({selectedSchol.organization.email || 'N/A'})
+              </Typography>
+            </>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button onClick={() => setOpenDetails(false)}>Close</Button>
+          <Button variant="contained" onClick={() => {
+            handleApply(selectedSchol?._id);
+            setOpenDetails(false);
+          }}>Apply Now</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

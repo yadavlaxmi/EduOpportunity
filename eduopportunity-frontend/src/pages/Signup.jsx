@@ -51,7 +51,11 @@ const Signup = () => {
         const userRole = response.data.user.role;
         const profileCompleted = response.data.user.profileCompleted;
         if (userRole === 'organization') {
-          navigate('/organization/dashboard');
+          if (profileCompleted) {
+            navigate('/organization/dashboard');
+          } else {
+            navigate('/organization/profile-setup');
+          }
         } else {
           if (profileCompleted) {
             navigate('/student/dashboard');

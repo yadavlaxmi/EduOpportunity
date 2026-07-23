@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Grid, Card, CardContent, Chip, Avatar, IconButton } from '@mui/material';
 import { motion } from 'framer-motion';
-import { MdSchool, MdEmojiEvents, MdFavorite, MdAssignment, MdBookmarkBorder } from 'react-icons/md';
+import { MdSchool, MdEmojiEvents, MdBookmark, MdAssignment, MdBookmarkBorder } from 'react-icons/md';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -105,7 +105,7 @@ const StudentDashboard = () => {
           <StatCard title="Total Olympiads" value={data.totalOlympiads} icon={<MdEmojiEvents size={28} />} color="#F59E0B" delay={0.2} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard title="Saved" value={data.savedScholarships + data.savedOlympiads} icon={<MdFavorite size={28} />} color="#EC4899" delay={0.3} />
+          <StatCard title="Saved" value={data.savedScholarships + data.savedOlympiads} icon={<MdBookmark size={28} />} color="#EC4899" delay={0.3} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard title="Applied" value={data.appliedScholarships + data.appliedOlympiads} icon={<MdAssignment size={28} />} color="#10B981" delay={0.4} />

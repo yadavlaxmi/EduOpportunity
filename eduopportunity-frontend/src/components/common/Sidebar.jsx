@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, Typography, Avatar, Divider } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
-import { MdDashboard, MdSchool, MdEmojiEvents, MdFavorite, MdAssignment, MdPerson, MdLogout } from 'react-icons/md';
+import { MdDashboard, MdSchool, MdEmojiEvents, MdBookmark, MdAssignment, MdPerson, MdLogout } from 'react-icons/md';
 
 const drawerWidth = 260;
 
@@ -12,7 +12,7 @@ const Sidebar = ({ role = 'student' }) => {
     { text: 'Dashboard', icon: <MdDashboard size={24} />, path: '/student/dashboard' },
     { text: 'Scholarships', icon: <MdSchool size={24} />, path: '/student/scholarships' },
     { text: 'Olympiads', icon: <MdEmojiEvents size={24} />, path: '/student/olympiads' },
-    { text: 'Saved', icon: <MdFavorite size={24} />, path: '/student/saved' },
+    { text: 'Saved', icon: <MdBookmark size={24} />, path: '/student/saved' },
     { text: 'Applied', icon: <MdAssignment size={24} />, path: '/student/applied' },
     { text: 'Profile', icon: <MdPerson size={24} />, path: '/student/profile' },
   ];

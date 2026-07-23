@@ -1,3 +1,5 @@
+const { body } = require("express-validator");
+
 exports.createOrganizationValidation = [
   body("organizationName")
     .notEmpty()
