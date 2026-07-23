@@ -5,6 +5,7 @@ const cors = require("cors");
 const express = require("express");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 const userRoutes = require("./routes/userRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const studentRoutes = require("./routes/studentRoutes");
@@ -12,6 +13,7 @@ const User = require("./models/User");
 const organizationRoutes = require("./routes/organizationRoutes");
 const scholarshipRoutes = require("./routes/scholarshipRoutes");
 const olympiadRoutes = require("./routes/olympiadRoutes");
+const applicationRoutes = require("./routes/applicationRoutes");
 const app = express();
 
 connectDB();
@@ -34,7 +36,8 @@ app.use("/api/student", studentRoutes);
 app.use("/api/organization", organizationRoutes);
 app.use("/api/scholarships", scholarshipRoutes);
 app.use("/api/olympiads", olympiadRoutes);
-
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/applications", applicationRoutes);
 
 app.get("/", async (req, res) => {
   const users = await User.find();

@@ -1,5 +1,5 @@
 const Scholarship = require("../models/Scholarship");
-
+const APIFeatures = require("../utils/schlorshipApiFeatures");
 // ====================================
 // Create Scholarship
 // ====================================
@@ -28,25 +28,52 @@ const createScholarship = async (req, res) => {
 // ====================================
 // Get All Published Scholarships
 // ====================================
+// ====================================
+// Get All Scholarships
+// ====================================
 const getAllScholarships = async (req, res) => {
   try {
-    const scholarships = await Scholarship.find({
+
+    const resultPerPage = Number(req.query.limit) || 10;
+
+    const apiFeatures = new APIFeatures(
+      Scholarship.find({
+        isActive: true,
+        status: "Published",
+      }).populate("organization", "fullName email"),
+      req.query
+    )
+      .search()
+      .filter()
+      .sort()
+      .pagination(resultPerPage);
+
+    const scholarships = await apiFeatures.query;
+
+    const totalScholarships = await Scholarship.countDocuments({
       isActive: true,
       status: "Published",
-    })
-      .populate("organization", "fullName email")
-      .sort({ createdAt: -1 });
+    });
 
     res.status(200).json({
       success: true,
+      totalScholarships,
+      currentPage: Number(req.query.page) || 1,
+      resultPerPage,
+      totalPages: Math.ceil(totalScholarships / resultPerPage),
       count: scholarships.length,
       scholarships,
     });
+
   } catch (error) {
+
+    console.log(error);
+
     res.status(500).json({
       success: false,
       message: "Server Error",
     });
+
   }
 };
 
