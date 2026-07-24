@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Grid, Card, CardContent, Chip, Button, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Divider } from '@mui/material';
+import { Box, Typography, Grid, Card, CardContent, Chip, Button, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Divider, Pagination } from '@mui/material';
 import { motion } from 'framer-motion';
 import { MdBookmarkBorder } from 'react-icons/md';
 import axios from 'axios';
@@ -10,25 +10,33 @@ const Olympiads = () => {
   const [loading, setLoading] = useState(true);
   const [selectedOlym, setSelectedOlym] = useState(null);
   const [openDetails, setOpenDetails] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    fetchOlympiads();
-  }, []);
+    fetchOlympiads(page);
+  }, [page]);
 
-  const fetchOlympiads = async () => {
+  const fetchOlympiads = async (currentPage = 1) => {
     try {
-      const response = await axios.get('http://localhost:5005/api/olympiads', {
+      setLoading(true);
+      const response = await axios.get(`http://localhost:5005/api/olympiads?page=${currentPage}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
         setOlympiads(response.data.olympiads);
+        setTotalPages(response.data.totalPages || 1);
       }
     } catch (error) {
       toast.error('Failed to load olympiads');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleChangePage = (event, value) => {
+    setPage(value);
   };
 
   const handleSave = async (id) => {
@@ -114,6 +122,12 @@ const Olympiads = () => {
         )}
       </Grid>
 
+      {totalPages > 1 && (
+        <Box mt={4} display="flex" justifyContent="center">
+          <Pagination count={totalPages} page={page} onChange={handleChangePage} color="primary" />
+        </Box>
+      )}
+
       {/* Details Dialog */}
       <Dialog open={openDetails} onClose={() => setOpenDetails(false)} maxWidth="sm" fullWidth>
         <DialogTitle fontWeight="bold">{selectedOlym?.title}</DialogTitle>
@@ -150,6 +164,48 @@ const Olympiads = () => {
               </Typography>
             </>
           )}
+
+          <Typography variant="subtitle1" fontWeight="bold" mt={2}>Additional Details</Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Exam Mode:</strong> {selectedOlym?.examMode || 'N/A'}
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Duration:</strong> {selectedOlym?.examDuration || 'N/A'}
+              </Typography>
+            </Grid>
+            {selectedOlym?.syllabus && (
+              <Grid item xs={12}>
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Syllabus:</strong> {selectedOlym.syllabus}
+                </Typography>
+              </Grid>
+            )}
+            {selectedOlym?.prizes && selectedOlym.prizes.length > 0 && (
+              <Grid item xs={12}>
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Prizes:</strong> {selectedOlym.prizes.join(', ')}
+                </Typography>
+              </Grid>
+            )}
+            {selectedOlym?.officialWebsite && (
+              <Grid item xs={12}>
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Official Website:</strong> <a href={selectedOlym.officialWebsite} target="_blank" rel="noreferrer" style={{color: '#1976d2'}}>{selectedOlym.officialWebsite}</a>
+                </Typography>
+              </Grid>
+            )}
+            {selectedOlym?.applicationLink && (
+              <Grid item xs={12}>
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Application Link:</strong> <a href={selectedOlym.applicationLink} target="_blank" rel="noreferrer" style={{color: '#1976d2'}}>{selectedOlym.applicationLink}</a>
+                </Typography>
+              </Grid>
+            )}
+          </Grid>
         </DialogContent>
         <DialogActions sx={{ p: 3 }}>
           <Button onClick={() => setOpenDetails(false)}>Close</Button>

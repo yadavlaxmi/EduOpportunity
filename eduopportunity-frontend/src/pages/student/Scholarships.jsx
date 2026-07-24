@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Grid, Card, CardContent, Chip, Button, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Divider } from '@mui/material';
+import { Box, Typography, Grid, Card, CardContent, Chip, Button, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Divider, Pagination } from '@mui/material';
 import { motion } from 'framer-motion';
 import { MdBookmarkBorder } from 'react-icons/md';
 import axios from 'axios';
@@ -10,25 +10,33 @@ const Scholarships = () => {
   const [loading, setLoading] = useState(true);
   const [selectedSchol, setSelectedSchol] = useState(null);
   const [openDetails, setOpenDetails] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    fetchScholarships();
-  }, []);
+    fetchScholarships(page);
+  }, [page]);
 
-  const fetchScholarships = async () => {
+  const fetchScholarships = async (currentPage = 1) => {
     try {
-      const response = await axios.get('http://localhost:5005/api/scholarships', {
+      setLoading(true);
+      const response = await axios.get(`http://localhost:5005/api/scholarships?page=${currentPage}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
         setScholarships(response.data.scholarships);
+        setTotalPages(response.data.totalPages || 1);
       }
     } catch (error) {
       toast.error('Failed to load scholarships');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleChangePage = (event, value) => {
+    setPage(value);
   };
 
   const handleSave = async (id) => {
@@ -117,6 +125,12 @@ const Scholarships = () => {
         )}
       </Grid>
 
+      {totalPages > 1 && (
+        <Box mt={4} display="flex" justifyContent="center">
+          <Pagination count={totalPages} page={page} onChange={handleChangePage} color="primary" />
+        </Box>
+      )}
+
       {/* Details Dialog */}
       <Dialog open={openDetails} onClose={() => setOpenDetails(false)} maxWidth="sm" fullWidth>
         <DialogTitle fontWeight="bold">{selectedSchol?.title}</DialogTitle>
@@ -148,6 +162,44 @@ const Scholarships = () => {
               </Typography>
             </>
           )}
+
+          <Typography variant="subtitle1" fontWeight="bold" mt={2}>Additional Details</Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Application Fee:</strong> ₹{selectedSchol?.applicationFee || 0}
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Mode:</strong> {selectedSchol?.applicationMode || 'N/A'}
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Min Percentage:</strong> {selectedSchol?.minimumPercentage ? `${selectedSchol.minimumPercentage}%` : 'N/A'}
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Total Seats:</strong> {selectedSchol?.totalSeats || 'N/A'}
+              </Typography>
+            </Grid>
+            {selectedSchol?.officialWebsite && (
+              <Grid item xs={12}>
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Official Website:</strong> <a href={selectedSchol.officialWebsite} target="_blank" rel="noreferrer" style={{color: '#1976d2'}}>{selectedSchol.officialWebsite}</a>
+                </Typography>
+              </Grid>
+            )}
+            {selectedSchol?.applicationLink && (
+              <Grid item xs={12}>
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Application Link:</strong> <a href={selectedSchol.applicationLink} target="_blank" rel="noreferrer" style={{color: '#1976d2'}}>{selectedSchol.applicationLink}</a>
+                </Typography>
+              </Grid>
+            )}
+          </Grid>
         </DialogContent>
         <DialogActions sx={{ p: 3 }}>
           <Button onClick={() => setOpenDetails(false)}>Close</Button>

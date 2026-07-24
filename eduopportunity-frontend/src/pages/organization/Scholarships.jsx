@@ -18,6 +18,12 @@ const OrganizationScholarships = () => {
     educationLevel: 'School',
     startDate: '',
     lastDate: '',
+    applicationFee: 0,
+    applicationMode: 'Online',
+    applicationLink: '',
+    officialWebsite: '',
+    minimumPercentage: 0,
+    totalSeats: 0,
     status: 'Published'
   });
 
@@ -52,6 +58,12 @@ const OrganizationScholarships = () => {
       educationLevel: 'School',
       startDate: '',
       lastDate: '',
+      applicationFee: 0,
+      applicationMode: 'Online',
+      applicationLink: '',
+      officialWebsite: '',
+      minimumPercentage: 0,
+      totalSeats: 0,
       status: 'Published'
     });
     setOpenDialog(true);
@@ -67,6 +79,12 @@ const OrganizationScholarships = () => {
       educationLevel: schol.educationLevel,
       startDate: schol.startDate ? schol.startDate.split('T')[0] : '',
       lastDate: schol.lastDate ? schol.lastDate.split('T')[0] : '',
+      applicationFee: schol.applicationFee || 0,
+      applicationMode: schol.applicationMode || 'Online',
+      applicationLink: schol.applicationLink || '',
+      officialWebsite: schol.officialWebsite || '',
+      minimumPercentage: schol.minimumPercentage || 0,
+      totalSeats: schol.totalSeats || 0,
       status: schol.status
     });
     setOpenDialog(true);
@@ -194,8 +212,35 @@ const OrganizationScholarships = () => {
                 <MenuItem key={level} value={level}>{level}</MenuItem>
               ))}
             </TextField>
-            <TextField label="Start Date" name="startDate" type="date" InputLabelProps={{ shrink: true }} value={formData.startDate} onChange={handleChange} required fullWidth />
-            <TextField label="Last Date" name="lastDate" type="date" InputLabelProps={{ shrink: true }} value={formData.lastDate} onChange={handleChange} required fullWidth />
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField label="Start Date" name="startDate" type="date" InputLabelProps={{ shrink: true }} value={formData.startDate} onChange={handleChange} required fullWidth />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField label="Last Date" name="lastDate" type="date" InputLabelProps={{ shrink: true }} value={formData.lastDate} onChange={handleChange} required fullWidth />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField label="Application Fee" name="applicationFee" type="number" value={formData.applicationFee} onChange={handleChange} fullWidth />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField select label="Application Mode" name="applicationMode" value={formData.applicationMode} onChange={handleChange} fullWidth>
+                  <MenuItem value="Online">Online</MenuItem>
+                  <MenuItem value="Offline">Offline</MenuItem>
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField label="Minimum Percentage (%)" name="minimumPercentage" type="number" value={formData.minimumPercentage} onChange={handleChange} fullWidth />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField label="Total Seats" name="totalSeats" type="number" value={formData.totalSeats} onChange={handleChange} fullWidth />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField label="Application Link (Where users apply)" name="applicationLink" value={formData.applicationLink} onChange={handleChange} fullWidth />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField label="Official Website" name="officialWebsite" value={formData.officialWebsite} onChange={handleChange} fullWidth />
+              </Grid>
+            </Grid>
             <TextField select label="Status" name="status" value={formData.status} onChange={handleChange} required fullWidth>
               {['Draft', 'Published', 'Closed'].map(status => (
                 <MenuItem key={status} value={status}>{status}</MenuItem>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../../services/api";
+import { useNavigate } from "react-router-dom";
 import GoogleLoginButton from "./GoogleLoginButton";
 
 function LoginForm() {
@@ -7,6 +8,7 @@ function LoginForm() {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -35,13 +37,13 @@ localStorage.setItem(
 
 
 if(res.data.user.role==="admin"){
-   navigate("/admin");
+   navigate("/admin/dashboard");
 }
 else if(res.data.user.role==="organization"){
-   navigate("/organization");
+   navigate("/organization/dashboard");
 }
 else{
-   navigate("/student");
+   navigate("/student/dashboard");
 }
 
     } catch (err) {

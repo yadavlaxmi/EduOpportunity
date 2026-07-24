@@ -153,6 +153,11 @@ const olympiadSchema = new mongoose.Schema(
       },
     ],
 
+    applicationLink: {
+      type: String,
+      default: "",
+    },
+
     officialWebsite: {
       type: String,
       default: "",

@@ -115,6 +115,58 @@ const scholarshipSchema = new mongoose.Schema(
       },
     ],
 
+    registrationFee: {
+      type: Number,
+      default: 0,
+    },
+
+    prizes: [
+      {
+        type: String,
+      },
+    ],
+
+    syllabus: {
+      type: String,
+      default: "",
+    },
+
+    examPattern: {
+      type: String,
+      default: "",
+    },
+
+    examDuration: {
+      type: Number,
+      default: 60,
+    },
+
+    examMode: {
+      type: String,
+      enum: [
+        "Online",
+        "Offline",
+      ],
+      default: "Online",
+    },
+
+    examDate: {
+      type: Date,
+    },
+
+    examCenters: [
+      {
+        state: String,
+        city: String,
+        address: String,
+      },
+    ],
+
+    winnersCount: {
+      type: Number,
+      default: 0,
+    },
+
   requiredDocuments: [
   {
     type: String,

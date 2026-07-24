@@ -19,6 +19,11 @@ import OrgScholarships from "./pages/organization/Scholarships";
 import OrgOlympiads from "./pages/organization/Olympiads";
 import OrgProfile from "./pages/organization/Profile";
 
+import AdminDashboard from "./pages/admin/Dashboard";
+import AdminUsers from "./pages/admin/Users";
+import AdminScholarships from "./pages/admin/Scholarships";
+import AdminOlympiads from "./pages/admin/Olympiads";
+
 function App() {
   return (
     <BrowserRouter>
@@ -54,6 +59,13 @@ function App() {
           <Route path="scholarships" element={<OrgScholarships />} />
           <Route path="olympiads" element={<OrgOlympiads />} />
           <Route path="profile" element={<OrgProfile />} />
+        </Route>
+
+        <Route path="/admin" element={<DashboardLayout role="admin" />}>
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="scholarships" element={<AdminScholarships />} />
+          <Route path="olympiads" element={<AdminOlympiads />} />
         </Route>
       </Routes>
     </BrowserRouter>

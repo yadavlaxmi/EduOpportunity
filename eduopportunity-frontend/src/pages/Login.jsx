@@ -24,7 +24,9 @@ const Login = () => {
         
         const role = response.data.user.role;
         const profileCompleted = response.data.user.profileCompleted;
-        if (role === 'organization') {
+        if (role === 'admin') {
+          navigate('/admin/dashboard');
+        } else if (role === 'organization') {
           if (profileCompleted) {
             navigate('/organization/dashboard');
           } else {
@@ -55,7 +57,9 @@ const Login = () => {
         
         const userRole = response.data.user.role;
         const profileCompleted = response.data.user.profileCompleted;
-        if (userRole === 'organization') {
+        if (userRole === 'admin') {
+          navigate('/admin/dashboard');
+        } else if (userRole === 'organization') {
           if (profileCompleted) {
             navigate('/organization/dashboard');
           } else {

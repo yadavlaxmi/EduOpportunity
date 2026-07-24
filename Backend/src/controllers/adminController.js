@@ -1,4 +1,6 @@
 const User = require("../models/User");
+const Scholarship = require("../models/Scholarship");
+const Olympiad = require("../models/Olympiad");
 
 // Get all users
 const getAllUsers = async (req, res) => {
@@ -139,10 +141,46 @@ const deleteUser = async (req, res) => {
 
 };
 
+// Get all scholarships for admin
+const getAllAdminScholarships = async (req, res) => {
+  try {
+    const scholarships = await Scholarship.find().populate("organization", "fullName email").sort({ createdAt: -1 });
+    res.status(200).json({
+      success: true,
+      count: scholarships.length,
+      scholarships,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+// Get all olympiads for admin
+const getAllAdminOlympiads = async (req, res) => {
+  try {
+    const olympiads = await Olympiad.find().populate("organization", "fullName email").sort({ createdAt: -1 });
+    res.status(200).json({
+      success: true,
+      count: olympiads.length,
+      olympiads,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
   updateUser,
   changeUserStatus,
   deleteUser,
+  getAllAdminScholarships,
+  getAllAdminOlympiads,
 };

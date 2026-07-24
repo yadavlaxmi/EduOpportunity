@@ -74,9 +74,6 @@ const Applied = () => {
                     <Typography variant="body2" color="text.secondary" mb={3} sx={{ flexGrow: 1 }}>
                       Status: {item.status}
                     </Typography>
-                    <Button variant="outlined" fullWidth color="success">
-                      Track Status
-                    </Button>
                   </CardContent>
                 </Card>
               </motion.div>

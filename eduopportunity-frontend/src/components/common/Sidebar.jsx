@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, Typography, Avatar, Divider } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
-import { MdDashboard, MdSchool, MdEmojiEvents, MdBookmark, MdAssignment, MdPerson, MdLogout } from 'react-icons/md';
+import { MdDashboard, MdSchool, MdEmojiEvents, MdBookmark, MdAssignment, MdPerson, MdLogout, MdPeople } from 'react-icons/md';
 
 const drawerWidth = 260;
 
@@ -24,7 +24,14 @@ const Sidebar = ({ role = 'student' }) => {
     { text: 'Profile', icon: <MdPerson size={24} />, path: '/organization/profile' },
   ];
 
-  const links = role === 'student' ? studentLinks : organizationLinks;
+  const adminLinks = [
+    { text: 'Dashboard', icon: <MdDashboard size={24} />, path: '/admin/dashboard' },
+    { text: 'Users', icon: <MdPeople size={24} />, path: '/admin/users' },
+    { text: 'Scholarships', icon: <MdSchool size={24} />, path: '/admin/scholarships' },
+    { text: 'Olympiads', icon: <MdEmojiEvents size={24} />, path: '/admin/olympiads' },
+  ];
+
+  const links = role === 'admin' ? adminLinks : role === 'organization' ? organizationLinks : studentLinks;
 
   const isActive = (path) => location.pathname === path;
 

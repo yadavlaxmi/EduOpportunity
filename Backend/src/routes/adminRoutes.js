@@ -40,6 +40,8 @@ const {
   updateUser,
   changeUserStatus,
   deleteUser,
+  getAllAdminScholarships,
+  getAllAdminOlympiads,
 } = require("../controllers/adminController");
 
 router.use(protect);
@@ -50,5 +52,8 @@ router.get("/users/:id", getUserById);
 router.put("/users/:id", updateUser);
 router.patch("/users/:id/status", changeUserStatus);
 router.delete("/users/:id", deleteUser);
+
+router.get("/scholarships", getAllAdminScholarships);
+router.get("/olympiads", getAllAdminOlympiads);
 
 module.exports = router;

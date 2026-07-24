@@ -17,6 +17,14 @@ const OrganizationOlympiads = () => {
     educationLevel: 'School',
     registrationStartDate: '',
     registrationEndDate: '',
+    registrationFee: 0,
+    examMode: 'Online',
+    examDuration: 60,
+    examDate: '',
+    syllabus: '',
+    prizes: '',
+    officialWebsite: '',
+    applicationLink: '',
     status: 'Published'
   });
 
@@ -50,6 +58,14 @@ const OrganizationOlympiads = () => {
       educationLevel: 'School',
       registrationStartDate: '',
       registrationEndDate: '',
+      registrationFee: 0,
+      examMode: 'Online',
+      examDuration: 60,
+      examDate: '',
+      syllabus: '',
+      prizes: '',
+      officialWebsite: '',
+      applicationLink: '',
       status: 'Published'
     });
     setOpenDialog(true);
@@ -64,6 +80,14 @@ const OrganizationOlympiads = () => {
       educationLevel: olym.educationLevel,
       registrationStartDate: olym.registrationStartDate ? olym.registrationStartDate.split('T')[0] : '',
       registrationEndDate: olym.registrationEndDate ? olym.registrationEndDate.split('T')[0] : '',
+      registrationFee: olym.registrationFee || 0,
+      examMode: olym.examMode || 'Online',
+      examDuration: olym.examDuration || 60,
+      examDate: olym.examDate ? olym.examDate.split('T')[0] : '',
+      syllabus: olym.syllabus || '',
+      prizes: olym.prizes ? olym.prizes.join(', ') : '',
+      officialWebsite: olym.officialWebsite || '',
+      applicationLink: olym.applicationLink || '',
       status: olym.status
     });
     setOpenDialog(true);
@@ -91,13 +115,17 @@ const OrganizationOlympiads = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const submitData = { ...formData };
+      if (typeof submitData.prizes === 'string') {
+        submitData.prizes = submitData.prizes.split(',').map(item => item.trim()).filter(i => i);
+      }
       let response;
       if (editingId) {
-        response = await axios.put(`http://localhost:5005/api/olympiads/${editingId}`, formData, {
+        response = await axios.put(`http://localhost:5005/api/olympiads/${editingId}`, submitData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        response = await axios.post('http://localhost:5005/api/olympiads', formData, {
+        response = await axios.post('http://localhost:5005/api/olympiads', submitData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
@@ -182,8 +210,41 @@ const OrganizationOlympiads = () => {
                 <MenuItem key={level} value={level}>{level}</MenuItem>
               ))}
             </TextField>
-            <TextField label="Registration Start Date" name="registrationStartDate" type="date" InputLabelProps={{ shrink: true }} value={formData.registrationStartDate} onChange={handleChange} required fullWidth />
-            <TextField label="Registration End Date" name="registrationEndDate" type="date" InputLabelProps={{ shrink: true }} value={formData.registrationEndDate} onChange={handleChange} required fullWidth />
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField label="Registration Start Date" name="registrationStartDate" type="date" InputLabelProps={{ shrink: true }} value={formData.registrationStartDate} onChange={handleChange} required fullWidth />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField label="Registration End Date" name="registrationEndDate" type="date" InputLabelProps={{ shrink: true }} value={formData.registrationEndDate} onChange={handleChange} required fullWidth />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField label="Exam Date (Optional)" name="examDate" type="date" InputLabelProps={{ shrink: true }} value={formData.examDate} onChange={handleChange} fullWidth />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField label="Registration Fee" name="registrationFee" type="number" value={formData.registrationFee} onChange={handleChange} fullWidth />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField select label="Exam Mode" name="examMode" value={formData.examMode} onChange={handleChange} fullWidth>
+                  <MenuItem value="Online">Online</MenuItem>
+                  <MenuItem value="Offline">Offline</MenuItem>
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField label="Exam Duration (mins)" name="examDuration" type="number" value={formData.examDuration} onChange={handleChange} fullWidth />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField label="Prizes (comma separated)" name="prizes" value={formData.prizes} onChange={handleChange} fullWidth />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField label="Syllabus/Topics" name="syllabus" value={formData.syllabus} onChange={handleChange} multiline rows={2} fullWidth />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField label="Application Link (Where users apply)" name="applicationLink" value={formData.applicationLink} onChange={handleChange} fullWidth />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField label="Official Website" name="officialWebsite" value={formData.officialWebsite} onChange={handleChange} fullWidth />
+              </Grid>
+            </Grid>
             <TextField select label="Status" name="status" value={formData.status} onChange={handleChange} required fullWidth>
               {['Draft', 'Published', 'Closed'].map(status => (
                 <MenuItem key={status} value={status}>{status}</MenuItem>
